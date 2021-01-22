@@ -13,11 +13,15 @@ class Predict(View):
     def get(self, request, userid):
 
         insta = FetchInstagramUser()
-        feature_array = {'input': insta.getFeatureArray(userid)}
+        try:
+            feature_array = {'input': insta.getFeatureArray(userid)}
 
-        result = requests.post('https://eogydkeql2.execute-api.us-east-1.amazonaws.com/default', data=json.dumps(feature_array))
+            result = requests.post(
+                'https://eogydkeql2.execute-api.us-east-1.amazonaws.com/default', data=json.dumps(feature_array))
 
-        return HttpResponse(json.dumps({
-            'userid': userid,
-            'is_real': not bool(result.json()['result'])
-        }), content_type='application/json')
+            return HttpResponse(json.dumps({
+                'userid': userid,
+                'is_real': not bool(result.json()['result'])
+            }), content_type='application/json')
+        except:
+            return HttpResponse("unknown error occured")
