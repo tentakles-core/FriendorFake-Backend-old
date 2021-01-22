@@ -15,7 +15,8 @@ class Predict(View):
         insta = FetchInstagramUser()
         feature_array = {'input': insta.getFeatureArray(userid)}
 
-        result = requests.post('https://eogydkeql2.execute-api.us-east-1.amazonaws.com/default', data=json.dumps(feature_array))
+        result = requests.post(
+            'https://eogydkeql2.execute-api.us-east-1.amazonaws.com/default', data=json.dumps(feature_array))
 
         return HttpResponse(json.dumps({
             'userid': userid,
