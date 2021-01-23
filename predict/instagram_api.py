@@ -10,7 +10,11 @@ class FetchInstagramUser():
         self.pattern = '<script type="text\/javascript">window._sharedData(.*?);<\/script>'
 
     def getFeatureArray(self, userid):
-        page = requests.get(self.base_url + userid)
+
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36'}
+
+        page = requests.get(self.base_url + userid, headers=headers)
 
         x = re.findall(self.pattern, page.text)[0].lstrip(' = ')
         y = json.loads(x)
@@ -21,9 +25,12 @@ class FetchInstagramUser():
             user_data['edge_follow']['count'],  # userFollowerCount
             user_data['edge_followed_by']['count'],  # userFollowingCount
             len(user_data['biography']),  # userBiographyLength
-            user_data['edge_owner_to_timeline_media']['count'],  # userMediaCount
-            1 if user_data['profile_pic_url'].find('cdninstagram') != -1 else 0,  # userHasProfilePic
+            # userMediaCount
+            user_data['edge_owner_to_timeline_media']['count'],
+            1 if user_data['profile_pic_url'].find(
+                'cdninstagram') != -1 else 0,  # userHasProfilePic
             1 if user_data['is_private'] else 0,  # userIsPrivate
-            sum(c.isdigit() for c in user_data['username']),  # usernameDigitCount
+            sum(c.isdigit()
+                for c in user_data['username']),  # usernameDigitCount
             len(user_data['username']),  # usernameLength
         ]
